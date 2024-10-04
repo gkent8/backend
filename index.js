@@ -5,15 +5,23 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 // Create an Express application
+const cors = require("cors");
+
+require("dotenv").config();
+
+// Create an Express application
 const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
-
+// Cors middleware
+app.use(cors());
 // User model schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  firstname: { type: String },
+  lastname: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);
