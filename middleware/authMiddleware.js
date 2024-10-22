@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
 module.exports = function (req, res, next) {
   let token = req.headers["x-auth-token"] || req.headers["authorization"];
+
   if (!token) {
     return res.status(401).json({ message: "Authorization denied" });
   }
+
   if (token.startsWith("Bearer ")) {
     token = token.slice(7, token.length).trim();
   }
