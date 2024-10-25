@@ -9,7 +9,7 @@ require("dotenv").config();
 // Registration route
 router.post("/register", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, firstname, lastname, password } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ username });
@@ -23,9 +23,9 @@ router.post("/register", async (req, res) => {
     // Create new user
     const newUser = new User({
       username,
-      password: hashedPassword,
       firstname,
       lastname,
+      password: hashedPassword,
     });
     await newUser.save();
 
@@ -36,12 +36,13 @@ router.post("/register", async (req, res) => {
 });
 
 // Login route
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, info) => {
   try {
     const { username, password } = req.body;
     console.log("username in login route", username);
     // Check if user exists
     const user = await User.findOne({ username });
+    console.log("user in login route", user);
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -57,7 +58,12 @@ router.post("/login", async (req, res) => {
       expiresIn: "1h",
     });
     console.log("token", token);
-    res.json({ token });
+    res.json({
+      token,
+      username,
+      firstname: user.firstname,
+      lastname: user.lastname,
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to login" });
     console.error("Error:", error);
@@ -67,10 +73,10 @@ router.post("/login", async (req, res) => {
 // use to get the username
 // when logging in you can store user id and username which can be accessed in the frontend
 // don't use async but useState
-// router.get("/user", async (req, res) => {
+// router.get("/username", async (req, res) => {
 //   try {
 //     const user = await User.findById(req.user.id); // Get user by ID from token
-//     if (!useSafeAreaFrame) {
+//     if (!user) {
 //       return res.status(404).json({ message: "User not found" });
 //     }
 
